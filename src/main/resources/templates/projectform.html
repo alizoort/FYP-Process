@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form id="myForm">
+
+</form>
+   <ul id="myList"></ul>
+<script>
+
+  let AllRows=[];
+    let list=document.getElementById("myList");
+      fetch("/submission/allSubmittedProjects").then((response)=>{
+          if(response.status==200){
+              console.log("!!!!!!");
+              return response.json();
+          }
+          else{
+              throw new Error("Error occured!!");
+          }
+      }).then(resp=>{
+          AllRows=resp;
+          var table =document.createElement('table');
+          var tableBody=document.createElement('tbody');
+          resp.forEach(function(rowData){
+              var row=document.createElement('tr');
+              row.setAttribute("id","tr"+rowData["id"].toString());
+              console.log("tr"+rowData["id"].toString());
+              Object.keys(rowData).forEach(cellData=>{
+                  if(rowData[cellData]!==false && rowData[cellData]!==true) {
+                      var cell = document.createElement('td');
+                      cell.appendChild(document.createTextNode(rowData[cellData]));
+                      row.appendChild(cell);
+                  }
+              });
+              var myCell=document.createElement('td');
+              var c=document.createElement("INPUT");
+              c.setAttribute("type","checkbox");
+              if(rowData.isCheck===true){
+                  c.checked=true
+              }
+              else{
+                  c.checked=false;
+              }
+              myCell.appendChild(c);
+              row.appendChild(myCell);
+              tableBody.appendChild(row);
+          });
+          table.appendChild(tableBody);
+          document.body.appendChild(table);
+          var button=document.createElement('button');
+          button.innerHTML='Submit';
+          button.onclick= function Submit(){
+              for(let i=0;i<AllRows.length;++i){
+                  var MyElement=document.getElementById("tr"+AllRows[i]["id"].toString());
+                  let data={};
+                  data["id"]=AllRows[i]["id"];
+                  data["title"]=MyElement.cells[1].innerText;
+                  console.log("cell value!!!!");
+                  console.log(MyElement.cells[1].innerText);
+                  console.log(MyElement.cells[2]);
+                  console.log(MyElement.cells[3]);
+                  console.log(MyElement.cells[4].firstChild.checked);
+                  data["supervisor"]=MyElement.cells[2].innerText;
+                  data["studentName"]=MyElement.cells[3].innerText;
+                  data["isCheck"]=MyElement.cells[4].firstChild.checked;
+                  fetch("/submission/"+AllRows[i]["id"].toString(),{
+                      method:'PUT',
+                      body:  JSON.stringify(data),
+                      headers:{'content-type': 'application/json'},
+                  }).then((resp)=>{
+                      console.log("!!!!!!!fetched");
+                  })
+              }
+          }
+          document.body.appendChild(button);
+      });
+
+
+</script>
+</body>
+</html>

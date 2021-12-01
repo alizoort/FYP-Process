@@ -1,5 +1,12 @@
-spring.datasource.url: jdbc:h2:file:./camunda-h2-database
-
+spring.datasource.url: jdbc:postgresql://localhost:5432/FYPCamunda
+spring.datasource.username: postgres
+spring.datasource.password: postgres
+spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
+spring.postgresql.console.enabled: true
+spring.jpa.show-sql: false
+spring.jpa.properties.hibernate.format_sql: true
+spring.jpa.hibernate.ddl-auto: update
+spring.jpa.hibernate.naming.implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
 camunda.bpm.admin-user:
   id: demo
   password: demo
