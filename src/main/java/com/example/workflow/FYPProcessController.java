@@ -1,22 +1,13 @@
 package com.example.workflow;
 
-import com.example.workflow.model.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.workflow.model.UserRegistered;
 import org.camunda.bpm.engine.ManagementService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
-import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.task.Task;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.*;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +30,7 @@ public class FYPProcessController  {
     public Boolean isAuthorized;
     String userType="";
     @PostMapping("/register")
-    public void registration(@RequestBody User user)  throws IOException, InterruptedException{
+    public void registration(@RequestBody UserRegistered user)  throws IOException, InterruptedException{
         isAuthorized=false;
         System.out.println(user.name);
         System.out.println(user.password);

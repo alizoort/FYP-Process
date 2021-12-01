@@ -23,9 +23,9 @@ public class ProfController {
         model.addAttribute("projects",projectRepository.findAll());
         return "projectform.html";
     }
-    @PostMapping("/submitted")
-    public String postprojects(@ModelAttribute("projects") Iterable<Project> project){
-        System.out.println(project);
+    @GetMapping("/submitted")
+    public String postprojects(){
+
         return "signin.html";
     }
 }

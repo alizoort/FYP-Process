@@ -1,8 +1,6 @@
 package com.example.workflow.model;
 
-import javax.persistence.Entity;
-public class User {
-
+public class UserRegistered {
     public String name;
     public String password;
     public Boolean isProf;
