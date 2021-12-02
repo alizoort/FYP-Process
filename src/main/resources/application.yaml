@@ -5,6 +5,7 @@ spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
 spring.postgresql.console.enabled: true
 spring.jpa.show-sql: false
 spring.jpa.properties.hibernate.format_sql: true
+spring.datasource.initialization-mode: always
 spring.jpa.hibernate.ddl-auto: update
 spring.jpa.hibernate.naming.implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
 camunda.bpm.admin-user:

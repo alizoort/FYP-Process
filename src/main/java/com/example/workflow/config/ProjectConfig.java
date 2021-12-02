@@ -29,9 +29,10 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         http.formLogin().defaultSuccessUrl("/submitted",true);
-        http.authorizeRequests().mvcMatchers(HttpMethod.GET,"/a").authenticated().mvcMatchers(HttpMethod.POST,"/a").
-                permitAll().mvcMatchers("/a/b/**").authenticated().mvcMatchers("/product/{code:^[0-9]*$}").permitAll().mvcMatchers("/hello").hasRole("ADMIN")
-                .mvcMatchers("/ciao").hasRole("MANAGER").anyRequest().authenticated();
+        http.authorizeRequests().mvcMatchers(HttpMethod.GET,"/a").authenticated().mvcMatchers(HttpMethod.POST,"/a")
+                .authenticated().mvcMatchers(HttpMethod.POST,"/submission/**").hasAnyRole("ADMIN","STUDENT")
+                .mvcMatchers(HttpMethod.PUT,"/submission/**").hasAnyRole("ADMIN","PROF")
+                .mvcMatchers(HttpMethod.DELETE,"/submission/**").hasAnyRole("ADMIN","PROF").anyRequest().authenticated();
         /**http.authorizeRequests().mvcMatchers(HttpMethod.GET,"/a")
          .authenticated().mvcMatchers(HttpMethod.POST,"/a").permitAll().anyRequest().denyAll();**/
         //http.authorizeRequests().anyRequest().hasRole("MANAGER");

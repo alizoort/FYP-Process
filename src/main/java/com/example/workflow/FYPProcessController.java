@@ -5,9 +5,12 @@ import org.camunda.bpm.engine.ManagementService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.userdetails.UserDetails;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +35,13 @@ public class FYPProcessController  {
     @PostMapping("/register")
     public void registration(@RequestBody UserRegistered user)  throws IOException, InterruptedException{
         isAuthorized=false;
-        System.out.println(user.name);
-        System.out.println(user.password);
-         if(user.name.equals("Caline") && user.password.equals("Caline")){
-             System.out.println(user.name);
-             System.out.println(user.password);
-             this.isAuthorized=true;
-         }
+        Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(principal.toString());
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
+        System.out.println(((List)SecurityContextHolder.getContext().getAuthentication().getAuthorities()));
+        if(((List)SecurityContextHolder.getContext().getAuthentication().getAuthorities()).contains("ROLE_ADMIN") || ((List)SecurityContextHolder.getContext().getAuthentication().getAuthorities()).contains("ROLE_PROF")){
+            isAuthorized=true;
+        }
          lock.lock();
          try{
              Map<String,Object>  hashMap=new HashMap<>();
@@ -47,11 +50,20 @@ public class FYPProcessController  {
              Task currentUserTask=null;
              List<Task> list=taskService.createTaskQuery().list();
              Boolean checkOnlyFirst=false;
+             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+             LocalDateTime now = LocalDateTime.now();
+             System.out.println("current time");
+
              for(Task task :list){
+                 System.out.println("!!!ICI");
+                 System.out.println(dtf.format(now));
+                 System.out.println(task.getCreateTime().toString().split(" ")[3]);
                  //System.out.println(task.getCamundaFormRef());
                  System.out.println(task.getId());
                  System.out.println(task.getName());
-                 if(task.getName().equals("registrationService") && checkOnlyFirst==false){
+                 System.out.println(dtf.format(now).split(" ")[0]);
+                 if(task.getName().equals("registrationService") && task.getCreateTime().toString().split(" ")[3].equals(dtf.format(now).split(" ")[1])){
+
                      System.out.println("HEREEEEE");
                      currentUserTask=task;
                      checkOnlyFirst=true;
