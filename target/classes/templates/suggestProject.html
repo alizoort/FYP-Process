@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Suggestion</title>
+</head>
+
+<style>
+    body{background: #e9e9e9}
+    h6,h1{text-align:center;font-family:cursive}
+    h1{margin-bottom:0px;color:#4443fa}
+    h6{margin-top:0px}
+    form{text-align:center}
+    .myForm{
+        background: white;
+        width:700px;
+        height:400px;
+        margin-top:200px;
+        margin-left:400px;
+        padding-top:15px
+     }
+    input[type="button"]{
+        margin-top:15px;
+        background-color: #4443fa;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+     }
+</style>
+
+<script>
+    function addProject(){
+        document.getElementById('projectTitle').style["border"]= "default";
+        document.getElementById('projectSupervisor').style["border"]= "default";
+        document.getElementById('projectStudentName').style["border"]= "default";
+
+        projectTitle=document.getElementById("projectTitle").value
+        projectSupervisor=document.getElementById("projectSupervisor").value
+        projectStudentName=document.getElementById("projectStudentName").value
+        projectDescription=document.getElementById("projectDescription");
+        if(projectTitle != "" && projectSupervisor != "" && projectStudentName != ""){
+            console.log("added :"+typeof(title))
+            let data={};
+            data["title"]=projectTitle;
+            data["isCheck"]=false;
+            data["supervisor"]=projectSupervisor;
+            data["studentName"]=projectStudentName;
+            data["description"]=projectDescription;
+            data["numberOfVotes"]=0;
+            console.log("the data is :"+JSON.stringify(data))
+
+            fetch("/submission",{
+                      method:'POST',
+                      body:  JSON.stringify(data),
+                      headers:{'content-type': 'application/json'},
+                  }).then((resp)=>{
+                      console.log("!!!!!!!fetched");
+                  })
+        }
+        else {
+                if(projectTitle === ""){
+                    document.getElementById('projectTitle').style["border"]= "2px solid red";
+                }
+                if( projectSupervisor === "" ){
+                    document.getElementById('projectSupervisor').style["border"]= "2px solid red";
+
+                }
+                if(projectStudentName === ""){
+                    document.getElementById('projectStudentName').style["border"]= "2px solid red";
+                }
+
+        }
+    }
+</script>
+<body >
+<div class="myForm">
+<h1 >Project Suggestion</h1>
+<h6>Please suggest your project and it will be reviewed by the committee</h6>
+    <form id="myForm" action="">
+
+        <label for="projectTitle">Project Title:</label><br>
+        <input type="text" id="projectTitle" name="projectTitle"><br>
+
+        <label for="projectSupervisor">Supervisor:</label><br>
+        <input type="text" id="projectSupervisor" name="projectSupervisor"><br>
+
+        <label for="projectStudentName">Student Name:</label><br>
+        <input type="text" id="projectStudentName" name="projectStudentName"><br>
+        <label for="projectDescription">Description</label><br>
+        <input type="text" id="projectDescription"><br>
+
+        <input type="button" value="Add Project" onclick="addProject()">
+    </form>
+</div>
+</body>
+
+</html>

@@ -10,17 +10,23 @@ public class Project {
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Id
     public Integer id;
-    public Project(Integer id,String title,String supervisor,String studentName,Boolean isCheck){
+    public Project(Integer id,String title,String supervisor,String studentName,Boolean isCheck,String description,Integer numberOfVotes,Boolean accepted){
         this.title=title;
         this.supervisor=supervisor;
         this.studentName=studentName;
         this.isCheck=isCheck;
+        this.numberOfVotes=numberOfVotes;
+        this.description=description;
+        this.accepted=accepted;
     }
     public Project(Project p){
         this.title=p.title;
         this.supervisor=p.supervisor;
         this.studentName=p.studentName;
         this.isCheck=p.isCheck;
+        this.description=p.description;
+        this.numberOfVotes=p.numberOfVotes;
+        this.accepted=p.accepted;
     }
     public Project(){
 
@@ -29,6 +35,9 @@ public class Project {
     public Boolean isCheck=false;
     private String supervisor;
     private String studentName;
+    public String description;
+    public Boolean accepted=true;
+    public Integer numberOfVotes=0;
     public String getTitle(){
         return this.title;
     }

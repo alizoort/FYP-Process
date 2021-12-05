@@ -9,12 +9,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/submission")
 public class StudentProjectSubmission {
+    public static Date deadline=new Date(2021,12,5,6,45,0);
     TaskService taskService;
     @Autowired
    ProjectRepo projectRepository ;
@@ -30,9 +38,13 @@ return (List<Project>) projectRepository.findAll();
 @PostMapping("")
     public Project createProject(@RequestBody Project project){
         Task currentUserTask=null;
-        Boolean checkOnlyFirst=false;
+        project.numberOfVotes=0;
     List<Task> list=taskService.createTaskQuery().list();
-    for(Task task :list){
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    LocalDateTime now = LocalDateTime.now();
+    System.out.println("DATE");
+    System.out.println(dtf.format(now));
+    for(Task task : list){
         //System.out.println(task.getCamundaFormRef());
         System.out.println(task.getId());
         System.out.println(task.getName());
@@ -40,12 +52,13 @@ return (List<Project>) projectRepository.findAll();
         System.out.println(task.getDescription());
         System.out.println(task.getCreateTime());
         System.out.println("!!!!!!!!!");
-        if(task.getName().equals("project submission by students") && checkOnlyFirst==false){
+    }
+    for(Task task : list){
+        if(task.getName().equals("project submission by students") ){
             currentUserTask=task;
-            checkOnlyFirst=true;
+            System.out.println("CURRENTUSERTASK");
+            System.out.println(currentUserTask);
         }
-        //  taskService.claim(task.getId(),null);
-        //taskService.complete(task.getId());
     }
     taskService.claim(currentUserTask.getId(),null);
     taskService.complete(currentUserTask.getId());
@@ -60,6 +73,16 @@ return (List<Project>) projectRepository.findAll();
 @PutMapping("/{id}")
 public Project updateProject(@PathVariable("id") Integer id,@RequestBody Project project){
       projectRepository.findById(id).orElseThrow(()->new StudentProjectSubmission.ResourceNotFoundException("No Project was found with id "+id));
+    List<Task> list=taskService.createTaskQuery().list();
+    Date secondDate = new Date(System.currentTimeMillis());
+     if(secondDate.compareTo(deadline)<0){
+         for(Task task : list){
+             if(task.getName().equals("Prof check for projects submitted")){
+                 taskService.claim(task.getId(),null);
+                 taskService.complete(task.getId());
+             }
+         }
+     }
       return projectRepository.save(project);
 }
 @DeleteMapping("/{id}")

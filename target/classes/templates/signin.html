@@ -5,6 +5,18 @@
     <title>Title</title>
 </head>
 <body>
-<h1>HELLO</h1>
+<h1>Start the process</h1>
+<button onclick="getPage()">Start</button>
+<script>
+    function getPage(){
+        fetch("/boot").then((response)=> {
+            if (response.status == 200) {
+                console.log("!!!!!!");
+            } else {
+                throw new Error("Error occured!!");
+            }
+        });
+    };
+</script>
 </body>
 </html>

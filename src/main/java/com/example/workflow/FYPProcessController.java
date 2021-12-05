@@ -9,11 +9,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 @RestController
@@ -32,16 +33,52 @@ public class FYPProcessController  {
     public static Map<String,List<Task>> mapOfTasks=new HashMap();
     public Boolean isAuthorized;
     String userType="";
+    public Boolean compareDates(Date date1) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+
+        Date firstDate = date1;
+        Date secondDate = new Date(System.currentTimeMillis());
+        System.out.println("FIRSTDATE AND SECOND DATE");
+        secondDate.setYear(121);
+        System.out.println(firstDate);
+        System.out.println(secondDate);
+        long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+        long diff = TimeUnit.DAYS.convert(diffInMillies,TimeUnit.MILLISECONDS);
+        if(diff==0){
+            diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+            diff = TimeUnit.HOURS.convert(diffInMillies,TimeUnit.MILLISECONDS);
+            if(diff==0){
+                diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+                diff = TimeUnit.MINUTES.convert(diffInMillies,TimeUnit.MILLISECONDS);
+                if(diff<=1){
+                    return true;
+                }
+
+            }
+            System.out.println(diff);
+            diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+            diff = TimeUnit.HOURS.convert(diffInMillies,TimeUnit.MILLISECONDS);
+            System.out.println(diff);
+            diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+            diff = TimeUnit.MINUTES.convert(diffInMillies,TimeUnit.MILLISECONDS);
+            System.out.println(diff);
+        }
+        return false;
+    }
     @PostMapping("/register")
-    public void registration(@RequestBody UserRegistered user)  throws IOException, InterruptedException{
+    public void registration(@RequestBody UserRegistered user)  throws IOException, InterruptedException,ParseException{
         isAuthorized=false;
         Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println(principal.toString());
         System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
         System.out.println(((List)SecurityContextHolder.getContext().getAuthentication().getAuthorities()));
-        if(((List)SecurityContextHolder.getContext().getAuthentication().getAuthorities()).contains("ROLE_ADMIN") || ((List)SecurityContextHolder.getContext().getAuthentication().getAuthorities()).contains("ROLE_PROF")){
-            isAuthorized=true;
-        }
+        ((List)SecurityContextHolder.getContext().getAuthentication().getAuthorities()).forEach(e->{
+            System.out.println(e);
+            if(e.toString().equals("ROLE_ADMIN") || (e.toString().equals("ROLE_PROF"))){
+                System.out.println("isAuthorized!!!!!?????");
+                this.isAuthorized=true;
+            }
+        });
          lock.lock();
          try{
              Map<String,Object>  hashMap=new HashMap<>();
@@ -49,7 +86,6 @@ public class FYPProcessController  {
              pi=runtimeService.startProcessInstanceByKey("FYP-Process-process",hashMap).getId();
              Task currentUserTask=null;
              List<Task> list=taskService.createTaskQuery().list();
-             Boolean checkOnlyFirst=false;
              DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
              LocalDateTime now = LocalDateTime.now();
              System.out.println("current time");
@@ -62,11 +98,11 @@ public class FYPProcessController  {
                  System.out.println(task.getId());
                  System.out.println(task.getName());
                  System.out.println(dtf.format(now).split(" ")[0]);
-                 if(task.getName().equals("registrationService") && task.getCreateTime().toString().split(" ")[3].equals(dtf.format(now).split(" ")[1])){
+                 compareDates(task.getCreateTime());
+                 if(task.getName().equals("registrationService") && compareDates(task.getCreateTime())){
 
                      System.out.println("HEREEEEE");
                      currentUserTask=task;
-                     checkOnlyFirst=true;
                  }
                  System.out.println(task.getTaskDefinitionKey());
                  System.out.println(task.getDescription());

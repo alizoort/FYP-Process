@@ -29,6 +29,8 @@
               var row=document.createElement('tr');
               row.setAttribute("id","tr"+rowData["id"].toString());
               console.log("tr"+rowData["id"].toString());
+              console.log("ROWDATA");
+              console.log(rowData);
               Object.keys(rowData).forEach(cellData=>{
                   if(rowData[cellData]!==false && rowData[cellData]!==true) {
                       var cell = document.createElement('td');
@@ -58,15 +60,26 @@
                   var MyElement=document.getElementById("tr"+AllRows[i]["id"].toString());
                   let data={};
                   data["id"]=AllRows[i]["id"];
-                  data["title"]=MyElement.cells[1].innerText;
+                  data["title"]=AllRows[i]["title"];
                   console.log("cell value!!!!");
                   console.log(MyElement.cells[1].innerText);
                   console.log(MyElement.cells[2]);
                   console.log(MyElement.cells[3]);
                   console.log(MyElement.cells[4].firstChild.checked);
-                  data["supervisor"]=MyElement.cells[2].innerText;
-                  data["studentName"]=MyElement.cells[3].innerText;
-                  data["isCheck"]=MyElement.cells[4].firstChild.checked;
+                  data["supervisor"]=AllRows[i]["supervisor"];
+                  data["studentName"]=AllRows[i]["studentName"];
+                  data["description"]=AllRows[i]["description"];
+                  data["isCheck"]=MyElement.cells[6].firstChild.checked;
+                  data["numberOfVotes"]=AllRows[i]["numberOfVotes"];
+                  console.log("numberOfVotes");
+                  console.log(AllRows[i]["numberOfVotes"]);
+                  if(data["isCheck"]===true){
+                      AllRows[i]["numberOfVotes"]=AllRows[i]["numberOfVotes"]+1;
+                      data["numberOfVotes"]=data["numberOfVotes"]+1;
+                      console.log(data["numberOfVotes"]);
+                  }
+                  console.log("DATA!!!");
+                  console.log(data);
                   fetch("/submission/"+AllRows[i]["id"].toString(),{
                       method:'PUT',
                       body:  JSON.stringify(data),
