@@ -51,6 +51,7 @@
             data["studentName"]=projectStudentName;
             data["description"]=projectDescription;
             data["numberOfVotes"]=0;
+            data["accepted"]=true;
             console.log("the data is :"+JSON.stringify(data))
 
             fetch("/submission",{

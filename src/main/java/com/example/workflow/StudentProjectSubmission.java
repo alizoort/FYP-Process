@@ -42,22 +42,9 @@ return (List<Project>) projectRepository.findAll();
     List<Task> list=taskService.createTaskQuery().list();
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     LocalDateTime now = LocalDateTime.now();
-    System.out.println("DATE");
-    System.out.println(dtf.format(now));
-    for(Task task : list){
-        //System.out.println(task.getCamundaFormRef());
-        System.out.println(task.getId());
-        System.out.println(task.getName());
-        System.out.println(task.getTaskDefinitionKey());
-        System.out.println(task.getDescription());
-        System.out.println(task.getCreateTime());
-        System.out.println("!!!!!!!!!");
-    }
     for(Task task : list){
         if(task.getName().equals("project submission by students") ){
             currentUserTask=task;
-            System.out.println("CURRENTUSERTASK");
-            System.out.println(currentUserTask);
         }
     }
     taskService.claim(currentUserTask.getId(),null);

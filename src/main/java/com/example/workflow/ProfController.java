@@ -22,7 +22,6 @@ public class ProfController {
     FYPProcessController fypController;
     @GetMapping("/projectform")
     public String projectform(Model model){
-        System.out.println("hello");
         model.addAttribute("projects",projectRepository.findAll());
         return "projectform.html";
     }
